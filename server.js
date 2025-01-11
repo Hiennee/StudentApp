@@ -1,5 +1,6 @@
 var express = require("express");
 var cors = require("cors");
+const crypto = require('crypto')
 var { MongoClient } = require("mongodb");
 
 var server = express()
@@ -18,12 +19,24 @@ var studentClassesCol = db.collection("StudentClasses");
 
 //------------------Login--------------------//
 server.post("/login", async (req, res) => {
+    var { email, password } = req.body;
+    const fixedSalt = Buffer.from('Q29uc3RhbnRTYWx0RGF0YQ==', 'base64'); // "ConstantSaltData"
+
+    function hashPassword(password) {
+        // Derive the hash using PBKDF2
+        const hash = crypto.pbkdf2Sync(password, fixedSalt, 100000, 32, 'sha256');
+        return hash.toString('base64');
+    }
+    const hashedPassword = hashPassword(password);
+
+    //console.log(`Password: ${password}`);
+    //console.log(`Hashed: ${hashedPassword}`);
     try
     {
-        var { email, password } = req.body;
+        
         var result = await accountCol.findOne({
             email: { $regex: email, $options: "i"},
-            password,
+            password: hashedPassword,
         });
         // if (result.role != "Student")
         // {
