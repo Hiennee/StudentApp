@@ -76,7 +76,7 @@ export default function CourseListComponent(props)
             </Picker>
             <View style = {{ marginBottom: 50 }}/>
             {courses.map((s, i) => (
-                <CourseComponent courseInfo = {s} account = {account}/>
+                <CourseComponent courseInfo = {s} account = {account} navigate = {navigate}/>
             ))}
         </SafeAreaView>
     )
@@ -84,7 +84,7 @@ export default function CourseListComponent(props)
 
 function CourseComponent(props)
 {
-    var { courseInfo, account } = props;
+    var { courseInfo, account, navigate } = props;
     var [ showModal, setShowModal ] = useState(false);
     //console.log("course component props:", props);
     return (
@@ -102,7 +102,7 @@ function CourseComponent(props)
                 </View>
             </View>
             <Modal visible = {showModal} onRequestClose = {() => setShowModal(false)}>
-                <StudentClassDetail courseInfo = {courseInfo} account = {account}/>
+                <StudentClassDetail courseInfo = {courseInfo} account = {account} navigate = {navigate}/>
             </Modal>
         </TouchableOpacity>
     )
@@ -111,7 +111,7 @@ function CourseComponent(props)
 function StudentClassDetail(props)
 {
     //console.log("std props: ", props)
-    var { courseInfo, account } = props;
+    var { courseInfo, account, navigate } = props;
     var [ stdClassDetail, setStdClassDetail ] = useState({});
     
     useEffect(() => {
@@ -134,6 +134,13 @@ function StudentClassDetail(props)
     }
     return (
         <View>
+            <View style={{flexDirection: "row"}}>
+                <Button iconRight={true} type="clear" onPress={() => navigate("Home")}>
+                    Quay về
+                    <AntDesign name="arrowleft" color="#457EE5" size={24}/>
+                </Button>
+                <View />
+            </View>
             <Card>
                 <Card.Title style = {{ fontSize: 20 }}>{account.name} - {account.accountId}</Card.Title>
                 <View style={{flexDirection: "row", justifyContent: "space-between", marginVertical: 10}}>
